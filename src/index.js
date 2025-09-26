@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // your code here
+
   const form = document.getElementById("create-task-form");
   const taskInput = document.getElementById("new-task-description");
   const taskList = document.getElementById("tasks");
-
+ 
   form.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the default form submission behavior
+    event.preventDefault();
 
     const taskDescription = taskInput.value.trim();
     if (taskDescription === "") {
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const listItem = document.createElement("li");
     listItem.textContent = taskDescription;
 
-     const deleteButton = document.createElement("button");
+    const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.addEventListener("click", function () {
       taskList.removeChild(listItem);
@@ -24,8 +24,21 @@ document.addEventListener("DOMContentLoaded", () => {
     listItem.appendChild(deleteButton);
     taskList.appendChild(listItem);
 
-    taskInput.value = ""; // Clear the input field after adding the task
+    taskInput.value = "";
+
   });
+
+  const sortButton = document.getElementById("sort-tasks");
+  sortButton.addEventListener("click", function () {
+    const tasksArray = Array.from(taskList.children).map(li => ({
+      element: li,
+      priority: li.getAttribute('data-priority') || 'Medium'
+    }));
+    const sortedTasks = sortTasksByStringPriorityAscending(tasksArray);
+    taskList.innerHTML = '';
+    sortedTasks.forEach(task => taskList.appendChild(task.element));
+  });
+
   function sortTasksByStringPriorityAscending(tasks) {
     const priorityOrder = { 'Low': 1, 'Medium': 2, 'High': 3 };
     return tasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
